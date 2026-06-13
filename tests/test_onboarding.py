@@ -1,55 +1,53 @@
-from onboarding import Onboarding, Role
-import json
+from onboarding import Onboarding, Role, User
+import pytest
 import os
 
-def test_sign_up():
+def test_signup():
     onboarding = Onboarding()
-    email = "user@example.com"
+    email = "test@example.com"
     role = Role.DEVELOPER
-    goals = ["Learn AI", "Build projects", "Get certified"]
-    roadmap = onboarding.sign_up(email, role, goals)
-    assert roadmap is not None
-    assert "week1" in roadmap
+    goals = ["Learn AI", "Build projects"]
+    roadmap = onboarding.signup(email, role, goals)
+    assert roadmap == {
+        "week1": [
+            {"day1": "Learn about AI"},
+            {"day2": "Explore machine learning"},
+            {"day3": "Discover deep learning"},
+        ]
+    }
+    assert os.path.exists(f"{email}.json")
+
+def test_load_user():
+    onboarding = Onboarding()
+    email = "test@example.com"
+    role = Role.DEVELOPER
+    goals = ["Learn AI", "Build projects"]
+    onboarding.signup(email, role, goals)
+    loaded_user = onboarding.load_user(email)
+    assert loaded_user.email == email
+    assert loaded_user.role == role
+    assert loaded_user.goals == goals
+
+def test_save_user():
+    onboarding = Onboarding()
+    email = "test@example.com"
+    role = Role.DEVELOPER
+    goals = ["Learn AI", "Build projects"]
+    user = User(email, role, goals)
+    onboarding.save_user(user)
+    assert os.path.exists(f"{email}.json")
 
 def test_generate_roadmap():
     onboarding = Onboarding()
-    email = "user@example.com"
+    email = "test@example.com"
     role = Role.DEVELOPER
-    goals = ["Learn AI", "Build projects", "Get certified"]
-    onboarding.sign_up(email, role, goals)
-    roadmap = onboarding.generate_roadmap(email)
-    assert roadmap is not None
-    assert "week1" in roadmap
-
-def test_store_data_securely():
-    onboarding = Onboarding()
-    email = "user@example.com"
-    role = Role.DEVELOPER
-    goals = ["Learn AI", "Build projects", "Get certified"]
-    onboarding.store_data_securely(email, role, goals)
-    assert os.path.exists(f"{email}.json")
-    with open(f"{email}.json", "r") as f:
-        data = json.load(f)
-        assert data["email"] == email
-        assert data["role"] == role.value
-        assert data["goals"] == goals
-
-def test_oauth_sign_up():
-    onboarding = Onboarding()
-    email = "user@example.com"
-    role = Role.DEVELOPER
-    goals = ["Learn AI", "Build projects", "Get certified"]
-    # Simulate OAuth sign up
-    roadmap = onboarding.sign_up(email, role, goals)
-    assert roadmap is not None
-    assert "week1" in roadmap
-
-def test_sign_up_via_email():
-    onboarding = Onboarding()
-    email = "user@example.com"
-    role = Role.DEVELOPER
-    goals = ["Learn AI", "Build projects", "Get certified"]
-    # Simulate email sign up
-    roadmap = onboarding.sign_up(email, role, goals)
-    assert roadmap is not None
-    assert "week1" in roadmap
+    goals = ["Learn AI", "Build projects"]
+    user = User(email, role, goals)
+    roadmap = onboarding.generate_roadmap(user)
+    assert roadmap == {
+        "week1": [
+            {"day1": "Learn about AI"},
+            {"day2": "Explore machine learning"},
+            {"day3": "Discover deep learning"},
+        ]
+    }

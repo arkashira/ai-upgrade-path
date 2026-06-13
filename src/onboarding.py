@@ -18,45 +18,39 @@ class Onboarding:
     def __init__(self):
         self.users = {}
 
-    def sign_up(self, email: str, role: Role, goals: List[str]):
-        self.users[email] = User(email, role, goals)
-        return self.generate_roadmap(email)
+    def signup(self, email: str, role: Role, goals: List[str]):
+        user = User(email, role, goals)
+        self.users[email] = user
+        self.save_user(user)
+        return self.generate_roadmap(user)
 
-    def generate_roadmap(self, email: str):
-        user = self.users.get(email)
-        if user:
-            # Auto-generate first week's roadmap based on role and goals
-            roadmap = {
-                "week1": [
-                    {"day1": "Introduction to AI"},
-                    {"day2": "Setting up the development environment"},
-                    {"day3": "Basic programming concepts"},
-                    {"day4": "Data structures and algorithms"},
-                    {"day5": "Introduction to machine learning"},
-                    {"day6": "Deep learning basics"},
-                    {"day7": "Project setup and planning"}
-                ]
-            }
-            return roadmap
-        return None
+    def generate_roadmap(self, user: User):
+        # Simple roadmap generation for demonstration purposes
+        roadmap = {
+            "week1": [
+                {"day1": "Learn about AI"},
+                {"day2": "Explore machine learning"},
+                {"day3": "Discover deep learning"},
+            ]
+        }
+        return roadmap
 
-    def store_data_securely(self, email: str, role: Role, goals: List[str]):
-        # Store data securely per GDPR
-        with open(f"{email}.json", "w") as f:
-            json.dump({
-                "email": email,
-                "role": role.value,
-                "goals": goals
-            }, f)
+    def save_user(self, user: User):
+        # Simulate saving user data securely
+        with open(f"{user.email}.json", "w") as f:
+            json.dump(
+                {
+                    "email": user.email,
+                    "role": user.role.value,
+                    "goals": user.goals,
+                },
+                f,
+            )
 
-def main():
-    onboarding = Onboarding()
-    email = "user@example.com"
-    role = Role.DEVELOPER
-    goals = ["Learn AI", "Build projects", "Get certified"]
-    roadmap = onboarding.sign_up(email, role, goals)
-    print(roadmap)
-    onboarding.store_data_securely(email, role, goals)
-
-if __name__ == "__main__":
-    main()
+    def load_user(self, email: str):
+        try:
+            with open(f"{email}.json", "r") as f:
+                user_data = json.load(f)
+                return User(user_data["email"], Role(user_data["role"]), user_data["goals"])
+        except FileNotFoundError:
+            return None
