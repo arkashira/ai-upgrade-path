@@ -1,19 +1,13 @@
-# AI Upgrade Path
-
-This project provides a personalized learning path engine for AI professionals. Users can select their role and career goals to generate a tailored learning roadmap.
-
-## Features
-
-- Generate a 4-week roadmap with 2 modules per week based on user-selected role and goals.
-- Automatically updates the roadmap when new breakthroughs are added to the knowledge base.
-- Users can view, reorder, or skip modules without breaking the path.
+# ai-upgrade-path
+A community collaboration layer for earning skill-recognition badges.
 
 ## Usage
+1. Create a `BadgeManager` instance.
+2. Add modules to a topic using `add_module`.
+3. Award badges to users using `award_badge`.
+4. Get badges for a user using `get_badges`.
+5. Filter badges by topic using `filter_badges`.
+6. Export badges as JSON using `export_badges`.
 
-1. Create an instance of `LearningPath` with the desired role and goals.
-2. Call `generate_path()` to create the learning modules.
-3. Use `to_json()` to get the learning path in JSON format.
-
-## Running Tests
-
-To run the tests, use the following command:
+## Testing
+Run `python -m pytest` to execute the tests.
